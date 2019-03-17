@@ -1,9 +1,9 @@
 # VS Code - Tasks and Contexts
 
-<a href="https://marketplace.visualstudio.com/items?itemName=choppedcode.vscode-tasks-and-contexts" title="Go to VS marketplace">
+<a href="https://marketplace.visualstudio.com/items?itemName=choppedcode.tasks-and-contexts" title="Go to VS marketplace">
   <img src="https://vsmarketplacebadge.apphb.com/version-short/choppedcode.vscode-tasks-and-contexts.svg">
 </a>
-<a href="https://github.com/Ho-Wan/vscode-trello-viewer" title="Go to Github repo">
+<a href="https://github.com/choppedcode/vscode-tasks-and-contexts" title="Go to Github repo">
   <img src="https://vsmarketplacebadge.apphb.com/installs/choppedcode.vscode-tasks-and-contexts.svg">
 </a>
 
