@@ -5,6 +5,10 @@
 	"version": "0.0.1",
 	"publisher": "choppedcode",
 	"enableProposedApi": false,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/choppedcode/vscode-tasks-and-contexts.git"
+	},
 	"engines": {
 		"vscode": "^1.32.0"
 	},
