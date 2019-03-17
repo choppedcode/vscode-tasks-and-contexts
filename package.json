@@ -1,0 +1,135 @@
+{
+	"name": "tasks-and-contexts",
+	"displayName": "Tasks And Contexts",
+	"description": "A task-focused interface to help you concentrate on the code that is relevant.",
+	"version": "0.0.1",
+	"publisher": "choppedcode",
+	"enableProposedApi": false,
+	"engines": {
+		"vscode": "^1.32.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onView:taskManager",
+		"*"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "task-manager",
+					"title": "Task Manager",
+					"icon": "images/dep.svg"
+				}
+			]
+		},
+		"views": {
+			"task-manager": [
+				{
+					"id": "taskManager",
+					"name": "Tasks"
+				}
+			]
+		},
+		"commands": [
+			{
+				"command": "taskManager.refreshTasks",
+				"title": "Refresh",
+				"icon": {
+					"light": "images/light/refresh.svg",
+					"dark": "images/dark/refresh.svg"
+				}
+			},
+			{
+				"command": "taskManager.addTask",
+				"title": "Add"
+			},
+			{
+				"command": "taskManager.addFromTrello",
+				"title": "Add From Trello"
+			},
+			{
+				"command": "taskManager.editTask",
+				"title": "Edit",
+				"icon": {
+					"light": "images/light/edit.svg",
+					"dark": "images/dark/edit.svg"
+				}
+			},
+			{
+				"command": "taskManager.deleteTask",
+				"title": "Delete",
+				"icon": {
+					"light": "images/light/delete.svg",
+					"dark": "images/dark/delete.svg"
+				}
+			},
+			{
+				"command": "taskManager.removeDocumentFromTask",
+				"title": "Remove File From Task"
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "taskManager.refreshTasks",
+					"when": "view == taskManager",
+					"group": "navigation"
+				},
+				{
+					"command": "taskManager.addTask",
+					"when": "view == taskManager"
+				},
+				{
+					"command": "taskManager.addFromTrello",
+					"when": "view == taskManager"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "taskManager.editTask",
+					"when": "view == taskManager && viewItem == task_default",
+					"group": "inline"
+				},
+				{
+					"command": "taskManager.deleteTask",
+					"when": "view == taskManager && viewItem == task_default",
+					"group": "inline"
+				}
+			],
+			"editor/title/context": [
+				{
+					"command": "taskManager.removeDocumentFromTask",
+					"group": "Group@1"
+				}
+			]
+		},
+		"keybindings": [
+			{
+				"command": "taskManager.removeDocumentFromTask",
+				"key": "shift+w",
+				"mac": "shift+w",
+				"when": "editorTextFocus"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install"
+	},
+	"devDependencies": {
+		"@types/node": "*",
+		"tslint": "^5.11.0",
+		"typescript": "^2.1.4",
+		"vscode": "^1.1.22"
+	},
+	"dependencies": {
+		"jsonc-parser": "^0.4.2",
+		"sha1": "^1.1.1"
+	}
+}
