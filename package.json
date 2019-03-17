@@ -2,7 +2,7 @@
 	"name": "tasks-and-contexts",
 	"displayName": "Tasks And Contexts",
 	"description": "A task-focused interface to help you concentrate on the code that is relevant.",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "choppedcode",
 	"enableProposedApi": false,
 	"repository": {
