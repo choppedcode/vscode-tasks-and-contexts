@@ -12,3 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.2] - 2019-03-17
 
 - Documentation update
+
+## [0.0.3] - 2019-03-17
+
+- Minor documentation update
+
+## [0.1.0] - 2019-03-18
+
+- Added support for using the task name as the commit message
+- Changed keybinding for Remove Document From Task

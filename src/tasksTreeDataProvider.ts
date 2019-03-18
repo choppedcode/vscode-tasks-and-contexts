@@ -9,12 +9,14 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 	readonly onDidChangeTreeData: vscode.Event<TaskTreeItem | undefined> = this._onDidChangeTreeData.event;
 
 	private packageJsonPath = null;
+	private commitMessagePath = null;
 	private emptySettings = { lock: false, active: null, sets: { default: { source: 'default', 'name': 'Default', tasks: {} } } };
 
 	constructor(private workspaceRoot: string) {
 		if (this.workspaceRoot) {
 			this.packageJsonPath = path.join(this.workspaceRoot, ".vscode", "tasks-and-contexts.json");
-			console.log(this.packageJsonPath);
+			this.commitMessagePath = path.join(this.workspaceRoot, ".vscode", "tasks-and-contexts-commit-msg.txt");
+			this.packageJson();
 		}
 	}
 
@@ -22,7 +24,9 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 		if (this.pathExists(this.packageJsonPath)) {
 			return JSON.parse(fs.readFileSync(this.packageJsonPath, 'utf-8'));
 		} else {
-			return JSON.parse(JSON.stringify(this.emptySettings));
+			const emptySettings = JSON.stringify(this.emptySettings, null, 2);
+			fs.writeFileSync(this.packageJsonPath, emptySettings, { encoding: 'utf-8' });
+			return JSON.parse(emptySettings);
 		}
 	}
 
@@ -184,7 +188,7 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 			});
 	}
 
-	async activateTask(taskName: string) {
+	async activateTask(taskId: string) {
 		if (this.pathExists(this.packageJsonPath)) {
 			var packageJson = JSON.parse(fs.readFileSync(this.packageJsonPath, 'utf-8'));
 		} else {
@@ -195,16 +199,17 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
 		packageJson.lock = false;
 
-		packageJson.active = taskName;
+		packageJson.active = taskId;
 		fs.writeFileSync(this.packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf-8' });
 		this.refresh();
 		for (var set in packageJson.sets) {
-			if (packageJson.sets[set].tasks[taskName] != undefined) {
-				for (var i in packageJson.sets[set].tasks[taskName].data) {
-					var fileName = packageJson.sets[set].tasks[taskName].data[i];
+			if (packageJson.sets[set].tasks[taskId] != undefined) {
+				for (var i in packageJson.sets[set].tasks[taskId].data) {
+					var fileName = packageJson.sets[set].tasks[taskId].data[i];
 					let doc = await vscode.workspace.openTextDocument(fileName); // calls back into the provider
 					await vscode.window.showTextDocument(doc, { preview: false });
 				}
+				fs.writeFileSync(this.commitMessagePath, packageJson.sets[set].tasks[taskId].name, { encoding: 'utf-8' });
 			}
 		}
 	}
@@ -270,7 +275,7 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 
 	getChildren(element?: TaskTreeItem): Thenable<TaskTreeItem[]> {
 		if (!this.workspaceRoot) {
-			vscode.window.showInformationMessage('No dependency in empty workspace');
+			vscode.window.showWarningMessage('Tasks and Contexts needs a workspace to run');
 			return Promise.resolve([]);
 		}
 		if (element) {
@@ -279,7 +284,7 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 			if (this.pathExists(this.packageJsonPath)) {
 				return Promise.resolve(this.getSetsinPackageJson());
 			} else {
-				vscode.window.showInformationMessage('Workspace has no package.json');
+				vscode.window.showInformationMessage('Workspace has no config file for Tasks and Contexts');
 				return Promise.resolve([]);
 			}
 		}

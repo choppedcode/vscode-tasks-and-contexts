@@ -18,12 +18,26 @@ Tasks can also be imported from your issue tracker. Currently, an integratio wit
 
 ## Features
 
-- Create tasks
-- Delete tasks
-- Rename tasks
-- Add documents to tasks
-- Remove documents from tasks
-- Import Trello cards as tasks
+### Create tasks
+Create new tasks by clicking on the 'Add' button in the Tasks view.
+
+### Switch tasks
+Simply click on a task to activate it. This will close all editors.
+
+### Delete tasks
+Click on the delete icon when selecting or hovering over a task.
+
+### Rename tasks
+Click on the edit icon when selecting or hovering over a task.
+
+### Add documents to tasks
+when a task has been activated, any document opened gets added to the task context.
+
+### Remove documents from tasks
+To remove a document from a task, use the Shift+Alt+w shortcut or select 'Remove Document From Task' from the document's top bar menu.
+
+### Import Trello cards as tasks
+Select the board and list you want to import and the extension auto creates tasks for you.
 
 ## Connecting to Trello
 
@@ -36,6 +50,34 @@ Please following these steps:
 - Search for "Extensions: Install from VSIX
 
 Connect to Trello as per the instructions included in the Trello Viewer extension.
+
+## Git commit messages
+
+Whenever you switch tasks, the extension writes the task name into the file .vscode/tasks-and-contexts-commit-msg.txt
+
+To have your git commit messages pre-filled with the task name, following these instructions.
+
+### Create a pre-commit-message Git hook
+Create a file .git/hooks/prepare-commit-msg with the following contents:
+
+```
+#!/bin/bash
+
+if [[ -f ../../.vscode/tasks-and-contexts-commit-msg.txt ]]; then
+        cat ../../.vscode/tasks-and-contexts-commit-msg.txt > $1
+fi
+```
+
+### Make the pre-commit-message executable
+Run the following command:
+
+```
+chmod +x .git/hooks/prepare-commit-msg
+```
+
+### Commit via the terminal
+Unfortunately, VS Code doesn't run the prepare-commit-msg hook so you need to run `git commit` via the terminal.
+Once you've activated a task and you run `git commit` it should pre-fill with the task name.
 
 ## Extension Settings
 
