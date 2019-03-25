@@ -21,3 +21,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added support for using the task name as the commit message
 - Changed keybinding for Remove Document From Task
+
+## [0.2.0] - 2019-03-25 
+- When switching tasks, check file still exists before trying to open it
+- Fixed documentation on how to auto-populate Git commit message
+- Changed icons

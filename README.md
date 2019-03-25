@@ -63,8 +63,8 @@ Create a file .git/hooks/prepare-commit-msg with the following contents:
 ```
 #!/bin/bash
 
-if [[ -f ../../.vscode/tasks-and-contexts-commit-msg.txt ]]; then
-        cat ../../.vscode/tasks-and-contexts-commit-msg.txt > $1
+if [[ -f .vscode/tasks-and-contexts-commit-msg.txt ]]; then
+        cat .vscode/tasks-and-contexts-commit-msg.txt > $1
 fi
 ```
 
