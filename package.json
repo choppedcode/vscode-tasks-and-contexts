@@ -2,7 +2,7 @@
 	"name": "tasks-and-contexts",
 	"displayName": "Tasks And Contexts",
 	"description": "A task-focused interface to help you concentrate on the code that is relevant.",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"publisher": "choppedcode",
 	"enableProposedApi": false,
 	"repository": {
@@ -20,13 +20,14 @@
 		"*"
 	],
 	"main": "./out/extension.js",
+	"icon": "images/tasks-and-contexts.png",
 	"contributes": {
 		"viewsContainers": {
 			"activitybar": [
 				{
 					"id": "task-manager",
 					"title": "Task Manager",
-					"icon": "images/dep.svg"
+					"icon": "images/tasks-and-contexts.svg"
 				}
 			]
 		},
