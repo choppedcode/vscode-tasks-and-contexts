@@ -206,8 +206,10 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 			if (packageJson.sets[set].tasks[taskId] != undefined) {
 				for (var i in packageJson.sets[set].tasks[taskId].data) {
 					var fileName = packageJson.sets[set].tasks[taskId].data[i];
-					let doc = await vscode.workspace.openTextDocument(fileName); // calls back into the provider
-					await vscode.window.showTextDocument(doc, { preview: false });
+					if (this.pathExists(fileName)) {
+						let doc = await vscode.workspace.openTextDocument(fileName);
+						await vscode.window.showTextDocument(doc, { preview: false });
+					}
 				}
 				fs.writeFileSync(this.commitMessagePath, packageJson.sets[set].tasks[taskId].name, { encoding: 'utf-8' });
 			}
@@ -359,6 +361,13 @@ export class TaskTreeItem extends vscode.TreeItem {
 	) {
 		super(label, collapsibleState);
 		this.contextValue = context;
+		if (context != 'set') {
+			this.iconPath = {
+				light: path.join(__filename, '..', '..', 'images', 'light', 'document.svg'),
+				dark: path.join(__filename, '..', '..', 'images', 'dark', 'document.svg')
+			};
+
+		}
 	}
 
 	get tooltip(): string {
@@ -366,13 +375,6 @@ export class TaskTreeItem extends vscode.TreeItem {
 	}
 
 	get description(): string {
-		return this.label;
+		return '';
 	}
-
-	iconPath = {
-		light: path.join(__filename, '..', '..', 'images', 'light', 'document.svg'),
-		dark: path.join(__filename, '..', '..', 'images', 'dark', 'document.svg')
-	};
-
-	contextValue = 'task';
 }
