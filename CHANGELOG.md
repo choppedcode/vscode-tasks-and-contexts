@@ -26,3 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - When switching tasks, check file still exists before trying to open it
 - Fixed documentation on how to auto-populate Git commit message
 - Changed icons
+
+## [0.3.0] - 2019-03-31
+- Show currently active task in status bar
+- Determine open editors (based on logic in eamodio.restore-editors)
+- Removed old logic for remove document from current task

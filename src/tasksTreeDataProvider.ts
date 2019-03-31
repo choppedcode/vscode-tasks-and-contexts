@@ -2,6 +2,9 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
+import { ActiveEditorTracker } from './activeEditorTracker';
+import { TextEditorComparer } from './comparers';
+
 export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeItem> {
 	private sha1 = require('sha1');
 
@@ -11,6 +14,8 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 	private packageJsonPath = null;
 	private commitMessagePath = null;
 	private emptySettings = { lock: false, active: null, sets: { default: { source: 'default', 'name': 'Default', tasks: {} } } };
+
+	taskStatusBarItem: vscode.StatusBarItem;
 
 	constructor(private workspaceRoot: string) {
 		if (this.workspaceRoot) {
@@ -33,6 +38,8 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 	private refresh(): void {
 		this._onDidChangeTreeData.fire();
 	}
+
+	private fileNames = [];
 
 	addTask(): void {
 		vscode.window.showInputBox({ placeHolder: 'Enter a task name' })
@@ -189,29 +196,73 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 	}
 
 	async activateTask(taskId: string) {
-		if (this.pathExists(this.packageJsonPath)) {
-			var packageJson = JSON.parse(fs.readFileSync(this.packageJsonPath, 'utf-8'));
-		} else {
-			var packageJson = JSON.parse(JSON.stringify(this.emptySettings));
-		}
-		packageJson.lock = true;
-		fs.writeFileSync(this.packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf-8' });
-		await vscode.commands.executeCommand('workbench.action.closeAllEditors');
-		packageJson.lock = false;
+		var packageJson = this.packageJson();
 
-		packageJson.active = taskId;
-		fs.writeFileSync(this.packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf-8' });
-		this.refresh();
-		for (var set in packageJson.sets) {
-			if (packageJson.sets[set].tasks[taskId] != undefined) {
-				for (var i in packageJson.sets[set].tasks[taskId].data) {
-					var fileName = packageJson.sets[set].tasks[taskId].data[i];
-					if (this.pathExists(fileName)) {
-						let doc = await vscode.workspace.openTextDocument(fileName);
-						await vscode.window.showTextDocument(doc, { preview: false });
+		if (packageJson.active) {
+			try {
+				const editorTracker = new ActiveEditorTracker();
+
+				let active = vscode.window.activeTextEditor;
+				let editor = active;
+				const openEditors: vscode.TextEditor[] = [];
+				do {
+					if (editor != null) {
+						// If we didn't start with a valid editor, set one once we find it
+						if (active === undefined) {
+							active = editor;
+						}
+
+						openEditors.push(editor);
+					}
+
+					editor = await editorTracker.awaitNext(500);
+					if (editor !== undefined && openEditors.some(_ => TextEditorComparer.equals(_, editor, { useId: true, usePosition: true }))) break;
+				} while ((active === undefined && editor === undefined) || !TextEditorComparer.equals(active, editor, { useId: true, usePosition: true }));
+
+				editorTracker.dispose();
+
+				for (var set in packageJson.sets) {
+					if (packageJson.sets[set].tasks[packageJson.active] != undefined) {
+						packageJson.sets[set].tasks[packageJson.active].data = [];
+						for (var i in openEditors) {
+							packageJson.sets[set].tasks[packageJson.active].data.push(openEditors[i].document.fileName);
+						}
+						await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+						fs.writeFileSync(this.packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf-8' });
+						break;
 					}
 				}
-				fs.writeFileSync(this.commitMessagePath, packageJson.sets[set].tasks[taskId].name, { encoding: 'utf-8' });
+			}
+			catch (ex) {
+				//Logger.error(ex, 'DocumentManager.save');
+			}
+		}
+
+		var packageJson = this.packageJson();
+		if (packageJson.active == taskId) {
+			this.taskStatusBarItem.hide();
+			packageJson.active = '';
+			fs.writeFileSync(this.packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf-8' });
+			this.refresh();
+			await fs.unlink(this.commitMessagePath, (err) => { });
+		} else {
+			packageJson.active = taskId;
+			fs.writeFileSync(this.packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf-8' });
+			this.refresh();
+			for (var set in packageJson.sets) {
+				if (packageJson.sets[set].tasks[taskId] != undefined) {
+					this.taskStatusBarItem.text = packageJson.sets[set].tasks[taskId].name;
+					this.taskStatusBarItem.tooltip = packageJson.sets[set].name + ': ' + packageJson.sets[set].tasks[taskId].name;
+					this.taskStatusBarItem.show();
+					for (var i in packageJson.sets[set].tasks[taskId].data) {
+						var fileName = packageJson.sets[set].tasks[taskId].data[i];
+						if (this.pathExists(fileName)) {
+							let doc = await vscode.workspace.openTextDocument(fileName);
+							await vscode.window.showTextDocument(doc, { preview: false });
+						}
+					}
+					fs.writeFileSync(this.commitMessagePath, packageJson.sets[set].tasks[taskId].name, { encoding: 'utf-8' });
+				}
 			}
 		}
 	}
@@ -239,36 +290,6 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 				}
 			}
 		}
-	}
-
-	removeDocument(document: vscode.TextDocument): void {
-		if (document.uri.scheme == 'file') {
-			const fileName = this.getRealFileName(document);
-			if (this.pathExists(this.packageJsonPath)) {
-				var packageJson = JSON.parse(fs.readFileSync(this.packageJsonPath, 'utf-8'));
-				if (packageJson.lock == true) return;
-				const activeTask = packageJson.active;
-				if (activeTask != null) {
-					for (var set in packageJson.sets) {
-						if (packageJson.sets[set].tasks[activeTask] != undefined) {
-							var index = packageJson.sets[set].tasks[activeTask].data.indexOf(fileName);
-							if (index > -1) {
-								packageJson.sets[set].tasks[activeTask].data.splice(index, 1);
-								fs.writeFileSync(this.packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf-8' });
-								this.refresh();
-								return;
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	removeDocumentFromTask(document: vscode.TextDocument) {
-		if (document == undefined) document = vscode.window.activeTextEditor.document;
-		vscode.commands.executeCommand('workbench.action.closeActiveEditor');
-		this.removeDocument(document);
 	}
 
 	getTreeItem(element: TaskTreeItem): vscode.TreeItem {

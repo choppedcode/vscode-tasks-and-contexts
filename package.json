@@ -2,7 +2,7 @@
 	"name": "tasks-and-contexts",
 	"displayName": "Tasks And Contexts",
 	"description": "A task-focused interface to help you concentrate on the code that is relevant.",
-	"version": "0.2.0",
+	"version": "0.3.0",
 	"publisher": "choppedcode",
 	"enableProposedApi": false,
 	"repository": {
@@ -71,10 +71,6 @@
 					"light": "images/light/delete.svg",
 					"dark": "images/dark/delete.svg"
 				}
-			},
-			{
-				"command": "taskManager.removeDocumentFromTask",
-				"title": "Remove Document From Task"
 			}
 		],
 		"menus": {
@@ -104,22 +100,8 @@
 					"when": "view == taskManager && viewItem == task_default",
 					"group": "inline"
 				}
-			],
-			"editor/title/context": [
-				{
-					"command": "taskManager.removeDocumentFromTask",
-					"group": "Group@1"
-				}
 			]
-		},
-		"keybindings": [
-			{
-				"command": "taskManager.removeDocumentFromTask",
-				"key": "shift+alt+w",
-				"mac": "shift+alt+w",
-				"when": "editorTextFocus"
-			}
-		]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

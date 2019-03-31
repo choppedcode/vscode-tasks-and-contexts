@@ -9,6 +9,8 @@
 
 The Tasks and Contexts extension for Visual Studio Code implements a task-focused interface.
 
+It is similar to the Eclipse Mylyn plugin.
+
 You can create as many tasks as you want. Anytime you activate a task, the documents you open are attached to that task.
 
 Switching from one task to another closes the current documents and opens the ones you linked to the new task.
@@ -22,7 +24,7 @@ Tasks can also be imported from your issue tracker. Currently, an integratio wit
 Create new tasks by clicking on the 'Add' button in the Tasks view.
 
 ### Switch tasks
-Simply click on a task to activate it. This will close all editors.
+Simply click on a task to activate it. This will close all editors associated with the previous task and open the ones associated with the newly selected one.
 
 ### Delete tasks
 Click on the delete icon when selecting or hovering over a task.
@@ -34,7 +36,7 @@ Click on the edit icon when selecting or hovering over a task.
 when a task has been activated, any document opened gets added to the task context.
 
 ### Remove documents from tasks
-To remove a document from a task, use the Shift+Alt+w shortcut or select 'Remove Document From Task' from the document's top bar menu.
+To remove a document from a task, simply close the document.
 
 ### Import Trello cards as tasks
 Select the board and list you want to import and the extension auto creates tasks for you.
