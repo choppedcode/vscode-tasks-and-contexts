@@ -31,3 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show currently active task in status bar
 - Determine open editors (based on logic in eamodio.restore-editors)
 - Removed old logic for remove document from current task
+
+## [0.4.0] - 2019-04-08
+- Expand tree view by default to show active task
+- Create .vscode directory if it doesn't exist yet

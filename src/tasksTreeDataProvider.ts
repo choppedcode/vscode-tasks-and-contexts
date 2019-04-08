@@ -19,6 +19,8 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 
 	constructor(private workspaceRoot: string) {
 		if (this.workspaceRoot) {
+			var vsCodePath = path.join(this.workspaceRoot, ".vscode");
+			if (!this.pathExists(vsCodePath)) fs.mkdirSync(vsCodePath);
 			this.packageJsonPath = path.join(this.workspaceRoot, ".vscode", "tasks-and-contexts.json");
 			this.commitMessagePath = path.join(this.workspaceRoot, ".vscode", "tasks-and-contexts-commit-msg.txt");
 			this.packageJson();
@@ -301,11 +303,25 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 			vscode.window.showWarningMessage('Tasks and Contexts needs a workspace to run');
 			return Promise.resolve([]);
 		}
+		var packageJson = this.packageJson();
+		var activeSet = '';
+		if (packageJson.active != '') {
+			for (var set in packageJson.sets) {
+				if (packageJson.sets[set].tasks[packageJson.active] != undefined) {
+					activeSet = set;
+					this.taskStatusBarItem.text = packageJson.sets[set].tasks[packageJson.active].name;
+					this.taskStatusBarItem.tooltip = packageJson.sets[set].name + ': ' + packageJson.sets[set].tasks[packageJson.active].name;
+					this.taskStatusBarItem.show();
+					break;
+				}
+			}
+
+		}
 		if (element) {
 			return Promise.resolve(this.getTasksinPackageJson(element.id));
 		} else {
 			if (this.pathExists(this.packageJsonPath)) {
-				return Promise.resolve(this.getSetsinPackageJson());
+				return Promise.resolve(this.getSetsinPackageJson(activeSet));
 			} else {
 				vscode.window.showInformationMessage('Workspace has no config file for Tasks and Contexts');
 				return Promise.resolve([]);
@@ -313,7 +329,7 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 		}
 	}
 
-	private getSetsinPackageJson(): TaskTreeItem[] {
+	private getSetsinPackageJson(activeSet): TaskTreeItem[] {
 		const packageJson = this.packageJson();
 		if (packageJson) {
 			const toDep = (set: string): TaskTreeItem => {
@@ -323,7 +339,7 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 					null,
 					set,
 					'set',
-					vscode.TreeItemCollapsibleState.Collapsed,
+					activeSet != set ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.Expanded,
 					null);
 			}
 
