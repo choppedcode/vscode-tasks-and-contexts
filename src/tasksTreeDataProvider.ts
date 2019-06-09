@@ -105,7 +105,7 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 					if (packageJson.sets[set] == undefined)
 						packageJson.sets[set] = { source: 'trello', name: boardName + " - " + listName, id: listId, tasks: {} };
 					if (packageJson.sets[set].tasks[cards[i].id] == undefined) {
-						packageJson.sets[set].tasks[cards[i].id] = { name: cards[i].name, data: [] };
+						packageJson.sets[set].tasks[cards[i].id] = { name: cards[i].name, link: cards[i].shortLink, data: [] };
 					}
 				}
 				fs.writeFileSync(this.packageJsonPath, JSON.stringify(packageJson, null, 2), { encoding: 'utf-8' });
@@ -147,11 +147,14 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 						var cards = await trelloApi.cards(listId);
 						if (cards != undefined) {
 							var cardIds = [];
+							console.log(cards);
 							for (var i in cards) {
 								cardIds.push(cards[i].id);
 								if (packageJson.sets[set].tasks[cards[i].id] == undefined) {
-									packageJson.sets[set].tasks[cards[i].id] = { name: cards[i].name, data: [] };
+									packageJson.sets[set].tasks[cards[i].id] = { name: cards[i].name, link: cards[i].shortLink, data: [] };
 									addCount++;
+								} else if (packageJson.sets[set].tasks[cards[i].id].link == undefined) {
+									packageJson.sets[set].tasks[cards[i].id].link = cards[i].shortLink;
 								}
 							}
 							for (var taskId in packageJson.sets[set].tasks) {
@@ -263,7 +266,10 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 							await vscode.window.showTextDocument(doc, { preview: false });
 						}
 					}
-					fs.writeFileSync(this.commitMessagePath, packageJson.sets[set].tasks[taskId].name, { encoding: 'utf-8' });
+					var commitMessage = packageJson.sets[set].tasks[taskId].name;
+					if (packageJson.sets[set].tasks[taskId].link != undefined)
+						commitMessage += "\n\n#" + packageJson.sets[set].source + ":" + packageJson.sets[set].tasks[taskId].link;
+					fs.writeFileSync(this.commitMessagePath, commitMessage, { encoding: 'utf-8' });
 				}
 			}
 		}
