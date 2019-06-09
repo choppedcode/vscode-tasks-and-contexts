@@ -35,3 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.4.0] - 2019-04-08
 - Expand tree view by default to show active task
 - Create .vscode directory if it doesn't exist yet
+
+## [0.5.0] - 2019-06-09
+- Included trello short url in commit message
