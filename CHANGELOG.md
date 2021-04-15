@@ -38,3 +38,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.0] - 2019-06-09
 - Included trello short url in commit message
+
+## [0.6.0] - 2019-06-09
+- Renamed IDs to avoid conflicts with other extensions

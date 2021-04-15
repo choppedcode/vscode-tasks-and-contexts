@@ -368,7 +368,7 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 					'task_' + packageJson.sets[set].source,
 					vscode.TreeItemCollapsibleState.None,
 					{
-						command: 'taskManager.activateTask',
+						command: 'tasksAndContextsManager.activateTask',
 						title: '',
 						arguments: [taskId]
 					}
@@ -409,15 +409,16 @@ export class TaskTreeItem extends vscode.TreeItem {
 				light: path.join(__filename, '..', '..', 'images', 'light', 'document.svg'),
 				dark: path.join(__filename, '..', '..', 'images', 'dark', 'document.svg')
 			};
-
 		}
 	}
 
-	get tooltip(): string {
+	/*
+	get tooltip: string {
 		return `${this.label} (${this.setName})`;
 	}
 
 	get description(): string {
 		return '';
 	}
+	*/
 }

@@ -7,13 +7,13 @@ import { TasksTreeDataProvider, TaskTreeItem } from './tasksTreeDataProvider'
 export function activate({ subscriptions }: vscode.ExtensionContext) {
 	const tasksTreeDataProvider = new TasksTreeDataProvider(vscode.workspace.rootPath);
 
-	vscode.window.registerTreeDataProvider('taskManager', tasksTreeDataProvider);
-	vscode.commands.registerCommand('taskManager.refreshTasks', () => tasksTreeDataProvider.refreshTasks());
-	vscode.commands.registerCommand('taskManager.activateTask', (taskName: string) => tasksTreeDataProvider.activateTask(taskName));
-	vscode.commands.registerCommand('taskManager.addTask', () => tasksTreeDataProvider.addTask());
-	vscode.commands.registerCommand('taskManager.addFromTrello', () => tasksTreeDataProvider.addFromTrello());
-	vscode.commands.registerCommand('taskManager.editTask', (node: TaskTreeItem) => tasksTreeDataProvider.renameEntry(node));
-	vscode.commands.registerCommand('taskManager.deleteTask', (node: TaskTreeItem) => tasksTreeDataProvider.deleteTask(node));
+	vscode.window.registerTreeDataProvider('tasksAndContextsManager', tasksTreeDataProvider);
+	vscode.commands.registerCommand('tasksAndContextsManager.refreshTasks', () => tasksTreeDataProvider.refreshTasks());
+	vscode.commands.registerCommand('tasksAndContextsManager.activateTask', (taskName: string) => tasksTreeDataProvider.activateTask(taskName));
+	vscode.commands.registerCommand('tasksAndContextsManager.addTask', () => tasksTreeDataProvider.addTask());
+	vscode.commands.registerCommand('tasksAndContextsManager.addFromTrello', () => tasksTreeDataProvider.addFromTrello());
+	vscode.commands.registerCommand('tasksAndContextsManager.editTask', (node: TaskTreeItem) => tasksTreeDataProvider.renameEntry(node));
+	vscode.commands.registerCommand('tasksAndContextsManager.deleteTask', (node: TaskTreeItem) => tasksTreeDataProvider.deleteTask(node));
 
 	vscode.workspace.onDidOpenTextDocument((document) => tasksTreeDataProvider.addDocument(document));
 

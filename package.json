@@ -2,7 +2,7 @@
 	"name": "tasks-and-contexts",
 	"displayName": "Tasks And Contexts",
 	"description": "A task-focused interface to help you concentrate on the code that is relevant.",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"publisher": "choppedcode",
 	"enableProposedApi": false,
 	"repository": {
@@ -16,7 +16,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:taskManager",
+		"onView:tasksAndContextsManager",
 		"*"
 	],
 	"main": "./out/extension.js",
@@ -25,23 +25,23 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "task-manager",
+					"id": "tasks-and-contexts-manager",
 					"title": "Task Manager",
 					"icon": "images/tasks-and-contexts.svg"
 				}
 			]
 		},
 		"views": {
-			"task-manager": [
+			"tasks-and-contexts-manager": [
 				{
-					"id": "taskManager",
+					"id": "tasksAndContextsManager",
 					"name": "Tasks"
 				}
 			]
 		},
 		"commands": [
 			{
-				"command": "taskManager.refreshTasks",
+				"command": "tasksAndContextsManager.refreshTasks",
 				"title": "Refresh",
 				"icon": {
 					"light": "images/light/refresh.svg",
@@ -49,15 +49,15 @@
 				}
 			},
 			{
-				"command": "taskManager.addTask",
+				"command": "tasksAndContextsManager.addTask",
 				"title": "Add"
 			},
 			{
-				"command": "taskManager.addFromTrello",
+				"command": "tasksAndContextsManager.addFromTrello",
 				"title": "Add From Trello"
 			},
 			{
-				"command": "taskManager.editTask",
+				"command": "tasksAndContextsManager.editTask",
 				"title": "Edit",
 				"icon": {
 					"light": "images/light/edit.svg",
@@ -65,7 +65,7 @@
 				}
 			},
 			{
-				"command": "taskManager.deleteTask",
+				"command": "tasksAndContextsManager.deleteTask",
 				"title": "Delete",
 				"icon": {
 					"light": "images/light/delete.svg",
@@ -76,28 +76,28 @@
 		"menus": {
 			"view/title": [
 				{
-					"command": "taskManager.refreshTasks",
-					"when": "view == taskManager",
+					"command": "tasksAndContextsManager.refreshTasks",
+					"when": "view == tasksAndContextsManager",
 					"group": "navigation"
 				},
 				{
-					"command": "taskManager.addTask",
-					"when": "view == taskManager"
+					"command": "tasksAndContextsManager.addTask",
+					"when": "view == tasksAndContextsManager"
 				},
 				{
-					"command": "taskManager.addFromTrello",
-					"when": "view == taskManager"
+					"command": "tasksAndContextsManager.addFromTrello",
+					"when": "view == tasksAndContextsManager"
 				}
 			],
 			"view/item/context": [
 				{
-					"command": "taskManager.editTask",
-					"when": "view == taskManager && viewItem == task_default",
+					"command": "tasksAndContextsManager.editTask",
+					"when": "view == tasksAndContextsManager && viewItem == task_default",
 					"group": "inline"
 				},
 				{
-					"command": "taskManager.deleteTask",
-					"when": "view == taskManager && viewItem == task_default",
+					"command": "tasksAndContextsManager.deleteTask",
+					"when": "view == tasksAndContextsManager && viewItem == task_default",
 					"group": "inline"
 				}
 			]
