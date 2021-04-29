@@ -116,7 +116,7 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 
 	deleteTask(task: TaskTreeItem): void {
 		var packageJson = this.packageJson();
-		if (packageJson.sets[task.set].type != 'default') {
+		if (packageJson.sets[task.set].source != 'default') {
 			vscode.window.showErrorMessage("You can not delete this type of task");
 			return;
 		}
@@ -176,7 +176,7 @@ export class TasksTreeDataProvider implements vscode.TreeDataProvider<TaskTreeIt
 
 	renameEntry(task: TaskTreeItem): void {
 		var packageJson = this.packageJson();
-		if (packageJson.sets[task.set].type != 'default') {
+		if (packageJson.sets[task.set].source != 'default') {
 			vscode.window.showErrorMessage("You can not rename this type of task");
 			return;
 		}
